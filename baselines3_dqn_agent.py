@@ -1,6 +1,6 @@
 import time
 
-from stable_baselines3.common.env_util import make_atari_env
+from env_util import make_atari_env
 from stable_baselines3.common.vec_env import VecFrameStack
 from stable_baselines3 import DQN
 
@@ -12,7 +12,7 @@ env = make_atari_env('Assault-v0', n_envs=1, seed=0)
 env = VecFrameStack(env, n_stack=4)
 
 model = DQN('CnnPolicy', env, verbose=1, buffer_size=10000, learning_starts=1024)
-model.learn(total_timesteps=100000)
+model.learn(total_timesteps=500)
 
 obs = env.reset()
 while True:
