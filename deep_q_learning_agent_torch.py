@@ -4,38 +4,39 @@ import random
 import time
 
 import numpy as np
-
-from collections import deque
+import matplotlib.pyplot as plt
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import torch
 
-MIN_REPLAY_MEMORY_SIZE = 10000
-MINIBATCH_SIZE = 32
+from collections import deque
+
+MIN_REPLAY_MEMORY_SIZE = 8000
+MINIBATCH_SIZE = 64
 DISCOUNT = 0.99
 NO_EPISODES = 50
+NO_TESTING_EPISODES = 5
 
 
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = nn.Conv2d(2, 32, kernel_size=(3, 3))
+        self.conv1 = nn.Conv2d(2, 64, kernel_size=(3, 3))
         self.pool = nn.MaxPool2d(2, 2)
-        self.conv2 = nn.Conv2d(32, 16, kernel_size=(3, 3))
-        self.fc1 = nn.Linear(5184, 100)
-        self.fc2 = nn.Linear(100, 6)
+        self.conv2 = nn.Conv2d(64, 32, kernel_size=(3, 3))
+
+        self.fc2 = nn.Linear(32 * 18 * 18, 6)
 
         self.criterion = nn.MSELoss()
-        self.optimizer = optim.SGD(self.parameters(), lr=0.001, momentum=0.9)
+        self.optimizer = optim.SGD(self.parameters(), lr=0.0005, momentum=0.9)
 
     def forward(self, x):
         x = F.relu(self.conv1(x))
         x = self.pool(x)
         x = F.relu(self.conv2(x))
         x = self.pool(x)
-        x = x.view(-1, 5184)
-        x = F.relu(self.fc1(x))
+        x = x.view(-1, 32 * 18 * 18)
         x = self.fc2(x)
         return x
 
@@ -44,7 +45,6 @@ class DQNAgent:
     def __init__(self, replay_memory_size, epsilon):
         self.epsilon = epsilon
         self.model = Net()
-        # Target network
 
         self.replay_memory = deque(maxlen=replay_memory_size)
         self.train_counter = 0
@@ -53,7 +53,6 @@ class DQNAgent:
         self.replay_memory.append([previous_state, action, reward, current_state, done])
 
     def get_action(self, state):
-        self.epsilon -= 1/50_000
         self.epsilon = max(0.05, self.epsilon)
         if random.random() < self.epsilon:
             return random.randint(0, 5)
@@ -66,12 +65,12 @@ class DQNAgent:
         return prediction[0]
 
     def train(self):
-
+        self.epsilon -= 1 / 50_000
         # Start training only if certain number of samples is already saved
         if len(self.replay_memory) < MIN_REPLAY_MEMORY_SIZE:
             return
         self.train_counter += 1
-        if self.train_counter % 4 != 0:
+        if self.train_counter % 16 != 0:
             return
 
         # Get a minibatch of random samples from memory replay table
@@ -84,11 +83,9 @@ class DQNAgent:
         previous_states /= 255
         with torch.no_grad():
             previous_q_values = self.model(previous_states)
-
-        current_states = torch.Tensor(MINIBATCH_SIZE, 2, 80, 80)
-        torch.cat([mem_item[0] for mem_item in minibatch], dim=0, out=current_states)
-        current_states /= 255
-        with torch.no_grad():
+            current_states = torch.Tensor(MINIBATCH_SIZE, 2, 80, 80)
+            torch.cat([mem_item[3] for mem_item in minibatch], dim=0, out=current_states)
+            current_states /= 255
             current_q_values = self.model(current_states)
 
         X = []
@@ -135,14 +132,15 @@ def observation_to_state(observation, previous_observation):
 
 def main():
     env = gym.make('Assault-v0')
-    agent = DQNAgent(replay_memory_size=10000,  epsilon=0.5)
+    agent = DQNAgent(replay_memory_size=10000, epsilon=0.5)
     time_step = 0
+    score = [0 for i in range(NO_EPISODES)]
     for episode in range(NO_EPISODES):
         observation = env.reset()
         current_state = observation_to_state(observation, observation)
         previous_lives = 4
         while True:
-            env.render()
+            # env.render()
             action = agent.get_action(current_state)
             previous_state = current_state
             previous_observation = observation
@@ -152,17 +150,37 @@ def main():
             reward /= 21
             if previous_lives > info["ale.lives"]:
                 previous_lives = info["ale.lives"]
-                reward = -100
+                reward = -1
             agent.update_replay_memory(previous_state, action, reward, current_state, done)
             agent.train()
-            print(episode, time_step)
 
             if done:
-                print("Episode finished")
+                print("Episode no " + str(episode) + " finished")
                 break
-        torch.save(agent.model.state_dict(), "lol.pth")
+
+        for testing_episode in range(NO_TESTING_EPISODES):
+            observation = env.reset()
+            current_state = observation_to_state(observation, observation)
+            while True:
+                # env.render()
+                action = agent.get_action(current_state)
+                current_observation, reward, done, info = env.step(action + 1)
+                score[episode] += reward
+                if done:
+                    break
+        score[episode] /= NO_TESTING_EPISODES
+        print("Score: " + str(score[episode]))
+
+        torch.save(agent.model.state_dict(), "ep_" + str(episode) + ".pth")
     env.close()
+    plt.plot(score)
+    plt.show()
 
 
 if __name__ == "__main__":
+    if torch.cuda.is_available():
+        dev = "cuda:0"
+    else:
+        dev = "cpu"
+        device = torch.device(dev)
     main()
