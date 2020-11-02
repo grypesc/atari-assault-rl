@@ -10,6 +10,7 @@ from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Activation, Flatten
 from tensorflow.keras.optimizers import Adam
 
+
 MIN_REPLAY_MEMORY_SIZE = 2048
 MINIBATCH_SIZE = 64
 DISCOUNT = 0.99
