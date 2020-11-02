@@ -133,7 +133,6 @@ def train(no_episodes=10, save=True, buffer_size=10000):
         current_state = observation_to_state(observation, observation)
         previous_lives = 4
         while True:
-            # env.render()
             action = agent.predict(current_state)
             previous_state = current_state
             previous_observation = observation
@@ -148,11 +147,11 @@ def train(no_episodes=10, save=True, buffer_size=10000):
             agent.update_replay_memory(previous_state, action, reward, current_state, done)
             agent.update_policy()
             if done:
-                print("Episode no " + str(episode) + " finished after " + str(time_step) + "timesteps")
-                print("Score: " + str(score[episode]))
+                print("Episode no {} finished after {} timesteps".format(episode, time_step))
+                print("Score: {}".format(score[episode]))
                 break
         if save:
-            torch.save(agent.model.state_dict(), "custom_dqn_ep_" + str(episode) + ".pth")
+            torch.save(agent.model.state_dict(), "{}/custom_dqn_ep_{}.pth".format(MODELS_ROOT, episode))
 
 
 def run_trained(model_path, episodes=5):
@@ -189,7 +188,6 @@ def main():
         current_state = observation_to_state(observation, observation)
         previous_lives = 4
         while True:
-            # env.render()
             action = agent.predict(current_state)
             previous_state = current_state
             previous_observation = observation
@@ -204,7 +202,7 @@ def main():
             agent.update_policy()
 
             if done:
-                print("Episode no " + str(episode) + " finished after " + str(time_step) + "timesteps")
+                print("Episode no {} finished after {} timesteps".format(episode, time_step))
                 break
 
         for testing_episode in range(NO_TESTING_EPISODES):
@@ -232,4 +230,4 @@ if __name__ == "__main__":
     else:
         dev = "cpu"
         device = torch.device(dev)
-    run_trained(model_path="../100epek/ep_97.pth")
+    train(5)
