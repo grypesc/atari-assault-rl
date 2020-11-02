@@ -1,10 +1,9 @@
-from settings import MODELS_ROOT
-from stable_baselines3.ppo import MlpPolicy
-
-from settings import MODELS_ROOT
+from settings import MODELS_ROOT, TB_LOGS_ROOT
+from stable_baselines3.ppo import CnnPolicy, PPO
 from util.env_util import make_vec_env
 
 MODEL_PATH = '{}/baselines3_ppo_agent'.format(MODELS_ROOT)
+TB_LOGS = '{}/baselines3'.format(TB_LOGS_ROOT)
 
 
 # FIXME: MemoryError: Unable to allocate 3.66 GiB for an array with shape (2048, 4, 3, 250, 160) and data type float32
@@ -17,7 +16,7 @@ class PPOAgent:
     @staticmethod
     def train(time_steps, save=False, **params):
         env = PPOAgent.create_env(4)
-        model = PPO(MlpPolicy, env, verbose=params.get('verbose', 1))
+        model = PPO(CnnPolicy, env, verbose=params.get('verbose', 1), tensorboard_log=TB_LOGS)
         model.learn(total_timesteps=time_steps)
         if save:
             model.save(MODEL_PATH)

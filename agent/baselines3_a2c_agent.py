@@ -1,13 +1,10 @@
-import time
-import gym
-from settings import MODELS_ROOT
-from util.env_util import make_atari_env
+from settings import MODELS_ROOT, TB_LOGS_ROOT
 from stable_baselines3 import A2C
-from stable_baselines3.a2c import MlpPolicy
+from stable_baselines3.a2c import CnnPolicy
 from util.env_util import make_vec_env
 
-
 MODEL_PATH = '{}/baselines3_a2c_agent'.format(MODELS_ROOT)
+TB_LOGS = '{}/baselines3'.format(TB_LOGS_ROOT)
 
 
 class A2CAgent:
@@ -19,7 +16,7 @@ class A2CAgent:
     @staticmethod
     def train(time_steps, save=False, **params):
         env = A2CAgent.create_env(4)
-        model = A2C(MlpPolicy, env, verbose=params.get('verbose', 1))
+        model = A2C(CnnPolicy, env, verbose=params.get('verbose', 1), tensorboard_log=TB_LOGS)
         model.learn(total_timesteps=time_steps)
         if save:
             model.save(MODEL_PATH)

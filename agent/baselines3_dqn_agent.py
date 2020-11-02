@@ -1,18 +1,17 @@
-import time
-from settings import MODELS_ROOT
+from settings import MODELS_ROOT, TB_LOGS_ROOT
 from util.env_util import make_atari_env
 from stable_baselines3.common.vec_env import VecFrameStack
 from stable_baselines3 import DQN
 
-
 MODEL_PATH = '{}/baselines3_dqn_agent'.format(MODELS_ROOT)
+TB_LOGS = '{}/baselines3'.format(TB_LOGS_ROOT)
 
 
 class DQNAgent:
 
     @staticmethod
     def create_env(n=1):
-        return VecFrameStack(make_atari_env('Assault-v0', n_envs=1, seed=0), n_stack=4)
+        return VecFrameStack(make_atari_env('Assault-v0', n_envs=n, seed=0), n_stack=4)
 
     @staticmethod
     def train(time_steps, save=False, **params):
@@ -25,8 +24,9 @@ class DQNAgent:
         # Here we are also multi-worker training (n_envs=4 => 4 environments)
         # Frame-stacking with 4 frames
 
-        env = DQNAgent.create_env()
-        model = DQN('CnnPolicy', env, verbose=verbose, buffer_size=buffer_size, learning_starts=learning_starts)
+        env = DQNAgent.create_env(1)
+        model = DQN('CnnPolicy', env, verbose=verbose, buffer_size=buffer_size, learning_starts=learning_starts,
+                    tensorboard_log=TB_LOGS)
         model.learn(time_steps)
         if save:
             model.save(MODEL_PATH)
