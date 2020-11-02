@@ -1,7 +1,10 @@
 import time
-from agent.random_agent import RandomAgent
-from agent.baselines3_dqn_agent import DQNAgent
+
 from agent.baselines3_a2c_agent import A2CAgent
+from agent.baselines3_dqn_agent import DQNAgent
+from agent.baselines3_ppo_agent import PPOAgent
+from agent.baselines3_sac_agent import SACAgent
+from agent.random_agent import RandomAgent
 
 
 def episode_callback(score, env_info, time_steps):
@@ -32,6 +35,8 @@ def run_trained(agent, sleep=0.001, episodes=100):
     env.close()
 
 
-# run_trained(DQNAgent())
-# run_trained(RandomAgent())
-# run_trained(A2CAgent())
+run_trained(DQNAgent())
+run_trained(RandomAgent())
+run_trained(A2CAgent())
+run_trained(SACAgent())
+run_trained(PPOAgent())
