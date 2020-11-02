@@ -1,6 +1,7 @@
 import numpy as np
 from stable_baselines3.common.callbacks import BaseCallback
 from stable_baselines3.common.evaluation import evaluate_policy
+from stable_baselines3.common.utils import safe_mean
 
 
 class StopTrainingOnMaxEpisodes(BaseCallback):
@@ -20,10 +21,15 @@ class StopTrainingOnMaxEpisodes(BaseCallback):
         done_array = np.array(self.locals.get("done") if self.locals.get("done") is not None else self.locals.get("dones"))
         episode_change = np.sum(done_array).item()
         if episode_change > 0:
+
+            # DQN-style-reward
+            reward = safe_mean([ep_info["r"] for ep_info in self.model.ep_info_buffer])
+            # DQN-style-length
+            length = safe_mean([ep_info["l"] for ep_info in self.model.ep_info_buffer])
             episode_rewards, episode_lengths = evaluate_policy(self.model, self.env, n_eval_episodes=5)
             mean_reward, std_reward = np.mean(episode_rewards), np.std(episode_rewards)
             mean_ep_length, std_ep_length = np.mean(episode_lengths), np.std(episode_lengths)
-            print("episode ended with score {} and length {}".format(self.map_score(mean_reward), mean_ep_length))
+            print("episode ended with score {} and length {}".format(reward, length))
 
         self.n_episodes += episode_change
         continue_training = self.n_episodes < self._total_max_episodes
