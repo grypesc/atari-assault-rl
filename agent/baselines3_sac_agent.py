@@ -1,3 +1,4 @@
+from stable_baselines3.common.vec_env import VecFrameStack
 from settings import MODELS_ROOT, TB_LOGS_ROOT
 from stable_baselines3 import SAC
 from stable_baselines3.sac import CnnPolicy
@@ -12,7 +13,7 @@ class SACAgent:
 
     @staticmethod
     def create_env():
-        return make_atari_env('Assault-v0', n_envs=1, seed=0)
+        return VecFrameStack(make_atari_env('Assault-v0', seed=0), n_stack=2)
 
     @staticmethod
     def train(time_steps, save=False, **params):

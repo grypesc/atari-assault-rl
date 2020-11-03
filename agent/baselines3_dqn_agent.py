@@ -1,7 +1,7 @@
 from settings import MODELS_ROOT, TB_LOGS_ROOT
-from util.env_util import make_atari_env
 from stable_baselines3.common.vec_env import VecFrameStack
 from stable_baselines3 import DQN
+from util.env_util import make_atari_env
 
 MODEL_PATH = '{}/baselines3_dqn_agent'.format(MODELS_ROOT)
 TB_LOGS = '{}/baselines3'.format(TB_LOGS_ROOT)
@@ -18,12 +18,6 @@ class DQNAgent:
         verbose = params.get('verbose', 1)
         buffer_size = params.get('buffer_size', 10000)
         learning_starts = params.get('learning_starts', 1024)
-
-        # There already exists an environment generator
-        # that will make and wrap atari environments correctly.
-        # Here we are also multi-worker training (n_envs=4 => 4 environments)
-        # Frame-stacking with 4 frames
-
         env = DQNAgent.create_env(1)
         model = DQN('CnnPolicy', env, verbose=verbose, buffer_size=buffer_size, learning_starts=learning_starts,
                     tensorboard_log=TB_LOGS)

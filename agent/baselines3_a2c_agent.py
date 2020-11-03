@@ -1,7 +1,7 @@
 from settings import MODELS_ROOT, TB_LOGS_ROOT
 from stable_baselines3 import A2C
-from stable_baselines3.a2c import CnnPolicy
-from util.env_util import make_vec_env
+from stable_baselines3.common.vec_env import VecFrameStack
+from util.env_util import make_atari_env
 
 MODEL_PATH = '{}/baselines3_a2c_agent'.format(MODELS_ROOT)
 TB_LOGS = '{}/baselines3'.format(TB_LOGS_ROOT)
@@ -11,12 +11,12 @@ class A2CAgent:
 
     @staticmethod
     def create_env(n=1):
-        return make_vec_env('Assault-v0', n_envs=n)
+        return VecFrameStack(make_atari_env('Assault-v0', n_envs=n, seed=0), n_stack=4)
 
     @staticmethod
     def train(time_steps, save=False, **params):
         env = A2CAgent.create_env(4)
-        model = A2C(CnnPolicy, env, verbose=params.get('verbose', 1), tensorboard_log=TB_LOGS)
+        model = A2C('CnnPolicy', env, verbose=params.get('verbose', 1), tensorboard_log=TB_LOGS)
         model.learn(total_timesteps=time_steps)
         if save:
             model.save(MODEL_PATH)
