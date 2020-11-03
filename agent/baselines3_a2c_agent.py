@@ -22,7 +22,7 @@ class A2CAgent:
             model.save(MODEL_PATH)
 
     def __init__(self):
-        self.env = A2CAgent.create_env()
+        self.env = A2CAgent.create_env(4)
         self.model = A2C.load(MODEL_PATH)
 
     def predict_action(self, obs):

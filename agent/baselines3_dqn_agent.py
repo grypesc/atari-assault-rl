@@ -18,7 +18,7 @@ class DQNAgent:
         verbose = params.get('verbose', 1)
         buffer_size = params.get('buffer_size', 10000)
         learning_starts = params.get('learning_starts', 1024)
-        env = DQNAgent.create_env(1)
+        env = DQNAgent.create_env(4)
         model = DQN('CnnPolicy', env, verbose=verbose, buffer_size=buffer_size, learning_starts=learning_starts,
                     tensorboard_log=TB_LOGS)
         model.learn(time_steps)

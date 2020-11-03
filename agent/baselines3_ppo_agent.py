@@ -22,7 +22,7 @@ class PPOAgent:
             model.save(MODEL_PATH)
 
     def __init__(self):
-        self.env = PPOAgent.create_env()
+        self.env = PPOAgent.create_env(4)
         self.model = PPO.load(MODEL_PATH)
 
     def predict_action(self, obs):
