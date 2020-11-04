@@ -266,4 +266,5 @@ dmypy.json
 
 # models
 model/
+models/
 *.zip

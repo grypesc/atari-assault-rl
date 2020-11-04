@@ -1,16 +1,16 @@
-import cv2
-import gym
 import random
 import time
+from collections import deque
 
-import numpy as np
+import cv2
+import gym
 import matplotlib.pyplot as plt
+import numpy as np
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-import torch
 
-from collections import deque
 from settings import MODELS_ROOT
 
 
@@ -154,7 +154,7 @@ def train(no_episodes=10, save=True, buffer_size=10000):
             torch.save(agent.model.state_dict(), "{}/custom_dqn_ep_{}.pth".format(MODELS_ROOT, episode))
 
 
-def run_trained(model_path, episodes=5):
+def run_trained(model_path, sleep=0.005, episodes=5):
     env = gym.make('Assault-v0')
     agent = DQNAgent(replay_memory_size=10000, epsilon=0.0)
     agent.load(model_path)
@@ -164,14 +164,14 @@ def run_trained(model_path, episodes=5):
         current_state = observation_to_state(observation, observation)
         while True:
             env.render()
-            time.sleep(0.03)
+            time.sleep(sleep)
             action = agent.predict(current_state)
             current_observation, reward, done, info = env.step(action + 1)
             score += reward
             if done:
                 break
     score /= episodes
-    print("Average score: " + str(episode))
+    print("Average score: " + str(score))
     return score
 
 
