@@ -40,14 +40,14 @@ agent_runner = {
     'dqn': lambda s, e: run_trained(DQNAgent(), s, e),
     'a2c': lambda s, e: run_trained(A2CAgent(), s, e),
     'ppo': lambda s, e: run_trained(PPOAgent(), s, e),
-    'dqn_tf': lambda s, e: run_custom_trained(model_path=os.path.join(MODELS_ROOT, "custom_ep_63.pth"), sleep=s, episodes=e),
-    'dqn_t': lambda s, e: run_custom_trained(model_path=os.path.join(MODELS_ROOT, "custom_ep_89_forgetting.pth"), sleep=s, episodes=e)
+    'dqn_custom': lambda s, e: run_custom_trained(model_path=os.path.join(MODELS_ROOT, "custom_ep_63.pth"), sleep=s, episodes=e),
+    'dqn_forgetting': lambda s, e: run_custom_trained(model_path=os.path.join(MODELS_ROOT, "custom_ep_89_forgetting.pth"), sleep=s, episodes=e)
 }
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--agent', type=str, help='agent chosen to run [rand|dqn|a2c|ppo|dqn_tf|dqn_t]')
+    parser.add_argument('--agent', type=str, help='agent chosen to run [rand|dqn|a2c|ppo|dqn_custom|dqn_forgetting]', required=True)
     parser.add_argument('--sleep', type=float, nargs='?', default=0.05, help='sleep time between time steps')
     parser.add_argument('--episodes', type=int, nargs='?', default=1, help='no. of episodes to run')
     args = parser.parse_args()
