@@ -1,10 +1,13 @@
 import time
+import os
 
 from agent.baselines3_a2c_agent import A2CAgent
 from agent.baselines3_dqn_agent import DQNAgent
 from agent.baselines3_ppo_agent import PPOAgent
 from agent.baselines3_sac_agent import SACAgent
 from agent.random_agent import RandomAgent
+from agent.deep_q_learning_agent_torch import run_trained as run_custom_trained
+from settings import MODELS_ROOT
 
 
 def episode_callback(score, env_info, time_steps):
@@ -15,28 +18,21 @@ def time_step_callback(rewards, env_info, time_steps):
     pass
 
 
-def run_trained(agent, sleep=0.001, episodes=100):
+def run_trained(agent, sleep=0.05, episodes=1):
     env = agent.env
     for e in range(episodes):
         obs = env.reset()
-        time_step = 0
-        acc_reward = 0
         while True:
             action = agent.predict_action(obs)
             obs, reward, done, info = env.step(action)
             env.render()
             time.sleep(sleep)
-            time_step += 1
-            acc_reward += agent.map_reward(reward)
-            time_step_callback(reward, info, time_step)
-            if done:
-                episode_callback(acc_reward, info, time_step)
-                break
     env.close()
 
 
-run_trained(DQNAgent())
 run_trained(RandomAgent())
+run_trained(DQNAgent())
 run_trained(A2CAgent())
-run_trained(SACAgent())
 run_trained(PPOAgent())
+run_custom_trained(model_path=os.path.join(MODELS_ROOT, "custom_ep_63.pth"))
+run_custom_trained(model_path=os.path.join(MODELS_ROOT, "custom_ep_89_forgetting.pth"))
