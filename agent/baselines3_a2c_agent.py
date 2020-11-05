@@ -1,6 +1,7 @@
-from settings import MODELS_ROOT, TB_LOGS_ROOT
 from stable_baselines3 import A2C
 from stable_baselines3.common.vec_env import VecFrameStack
+
+from settings import MODELS_ROOT, TB_LOGS_ROOT
 from util.env_util import make_atari_env
 
 MODEL_PATH = '{}/baselines3_a2c_agent'.format(MODELS_ROOT)
@@ -28,6 +29,3 @@ class A2CAgent:
     def predict_action(self, obs):
         return self.model.predict(obs)[0]
 
-    # FIXME reward is either 0.0 or 1.0
-    def map_reward(self, reward):
-        return reward.sum()

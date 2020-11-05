@@ -1,5 +1,4 @@
 import gym
-import time
 
 
 class RandomAgent:
@@ -17,6 +16,3 @@ class RandomAgent:
 
     def predict_action(self, obs):
         return self.env.action_space.sample()
-
-    def map_reward(self, reward):
-        return reward

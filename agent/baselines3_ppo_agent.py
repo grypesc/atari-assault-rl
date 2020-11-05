@@ -1,6 +1,7 @@
-from settings import MODELS_ROOT, TB_LOGS_ROOT
 from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import VecFrameStack
+
+from settings import MODELS_ROOT, TB_LOGS_ROOT
 from util.env_util import make_atari_env
 
 MODEL_PATH = '{}/baselines3_ppo_agent'.format(MODELS_ROOT)
@@ -27,6 +28,3 @@ class PPOAgent:
 
     def predict_action(self, obs):
         return self.model.predict(obs)[0]
-
-    def map_reward(self, reward):
-        return reward.sum()

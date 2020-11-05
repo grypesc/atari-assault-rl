@@ -1,1 +1,14 @@
-# atari-assault-rl
+# Reinforcement Learning - Atari Assault
+
+## running
+1. Make sure you have copied all models to `{project root}/models` directory ([link](https://drive.google.com/file/d/1vk_gYyx3ofwosSm_oe4oBst5cnCSkWt7/view?usp=sharing))
+1. Decide which agent you want to run. Available agents:
+    * `rand` - Random Agent
+    * `dqn` - DQN Agent (Baselines3)
+    * `a2c` - A2C Agent (Baselines3)
+    * `ppo` - PPO Agent
+    * `dqn_tf` - DQN Agent (implemented with TensorFlow)
+    * `dqn_t` - DQN Agent (implemented with PyTorch)
+1. Decide how long the algorithm should sleep between time steps (default value is 0.05s)
+1. Decide how many episodes (full games) the algorithm should play (default value is 1)
+1. Run with `python run.py --agent <chosen agent> [--sleep <float>] [--episodes <int>]`
