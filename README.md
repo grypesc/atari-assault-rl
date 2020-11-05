@@ -1,6 +1,13 @@
 # Reinforcement Learning - Atari Assault
 
-## running
+## Requirements
+1. Python `>= 3.6`
+1. PIP `>= 20.2.4`
+
+## Installing dependencies
+`pip install -r requirements.txt`
+
+## Running
 1. Make sure you have copied all models to `{project root}/models` directory ([link](https://drive.google.com/file/d/1vk_gYyx3ofwosSm_oe4oBst5cnCSkWt7/view?usp=sharing))
 1. Decide which agent you want to run. Available agents:
     * `rand` - Random Agent
