@@ -16,14 +16,14 @@ class PPOAgent:
 
     @staticmethod
     def train(time_steps, save=False, **params):
-        env = PPOAgent.create_env(4)
+        env = PPOAgent.create_env(1)
         model = PPO('CnnPolicy', env, verbose=params.get('verbose', 1), tensorboard_log=TB_LOGS)
         model.learn(total_timesteps=time_steps)
         if save:
             model.save(MODEL_PATH)
 
     def __init__(self):
-        self.env = PPOAgent.create_env(4)
+        self.env = PPOAgent.create_env(1)
         self.model = PPO.load(MODEL_PATH)
 
     def predict_action(self, obs):

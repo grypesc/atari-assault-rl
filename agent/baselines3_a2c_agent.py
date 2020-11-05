@@ -16,14 +16,14 @@ class A2CAgent:
 
     @staticmethod
     def train(time_steps, save=False, **params):
-        env = A2CAgent.create_env(4)
+        env = A2CAgent.create_env(1)
         model = A2C('CnnPolicy', env, verbose=params.get('verbose', 1), tensorboard_log=TB_LOGS)
         model.learn(total_timesteps=time_steps)
         if save:
             model.save(MODEL_PATH)
 
     def __init__(self):
-        self.env = A2CAgent.create_env(4)
+        self.env = A2CAgent.create_env(1)
         self.model = A2C.load(MODEL_PATH)
 
     def predict_action(self, obs):
