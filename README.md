@@ -13,9 +13,9 @@
     * `rand` - Random Agent
     * `dqn` - DQN Agent (Baselines3)
     * `a2c` - A2C Agent (Baselines3)
-    * `ppo` - PPO Agent
+    * `ppo` - PPO Agent (Baselines3)
     * `dqn_custom` - DQN Agent (implemented with PyTorch)
-    * `dqn_forgetting` - DQN Agent (beta version; with open issues)
+    * `dqn_forgetting` - DQN Agent (implemented with PyTorch, shows agent performance after catastrophic forgetting)
 1. Decide how long the algorithm should sleep between time steps (default value is 0.05s)
 1. Decide how many episodes (full games) the algorithm should play (default value is 1)
 1. Run with `python run.py --agent <chosen agent> [--sleep <float>] [--episodes <int>]`
